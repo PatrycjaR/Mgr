@@ -1,6 +1,6 @@
 function [FRAMES, countOfFrames, structure, fps]=Fun_ReadAndSave(path, structure, dir)
 
-path=strcat(dir,'\',path);
+path=fullfile(dir,path);
 % path='1 (1).mp4'
 reader = vision.VideoFileReader(path, 'ImageColorSpace', 'Intensity');
 %

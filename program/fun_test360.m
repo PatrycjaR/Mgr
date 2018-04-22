@@ -1,17 +1,18 @@
-function []=fun_test360(fn, vr, dir) %zmien version, bo pokazuje wersje matlaba!!
-%przetwarzaj(fn, version, ...)
-% wczytywanie filmu
-%dla szybkiego
-% fn = '1 (53).mp4';
+function []=fun_test360(fn, vr, dir) 
+
 structure.Face=[]; % +
 structure.Body=[]; % +
 structure.Markers=[]; % +
 structure.IsFace=[]; %+
 structure.Sum=[];  %+
+structure.SumDec=[]; %+
 structure.Frames=[]; % +
 structure.Mask=[]; % +
 structure.TimeOfRound=[]; % +
 structure.FrameWithMarker=[];
+
+structure.Neighborhood=[];
+
 %czytanie filmu i ewentualny zapis .mat
 
 [FRAMES, countOfFrames, structure, fps]=Fun_ReadAndSave(fn, structure, dir);
@@ -25,34 +26,30 @@ for i = 1 : length(FRAMES)
 end
 disp('skonczylem')
 
-FRAMES3 = cell(size(FRAMES));
-for i = 1 : length(FRAMES)
-     fprintf(1, 'ramka %d z %d\n', i, countOfFrames);
-    FRAMES3{i} = FRAMES{i}(1:10:end, 1:10:end);
-    structure.Frames{i}=FRAMES{i};
-     %FRAMES3{i} = FRAMES2{i}(1:10:end, 1:10:end);
-end
+% FRAMES3 = cell(size(FRAMES));
+% for i = 1 : length(FRAMES)
+%      fprintf(1, 'ramka %d z %d\n', i, countOfFrames);
+%     FRAMES3{i} = FRAMES{i}(1:10:end, 1:10:end);
+%     structure.Frames{i}=FRAMES{i};
+%      FRAMES3{i} = FRAMES2{i}(1:10:end, 1:10:end);
+% end
 disp('skonczylem')
-
-
-
 
 %% poszukiwanie ciala i twarzy
 
-%mask = [];
- [mask, structure]=Fun_FindFaceAndBody(FRAMES, structure);
+[mask, structure]=Fun_FindFaceAndBody(FRAMES2, structure);
 % [mask, structure]=Fun_FindBody(FRAMES, structure); %, FrameWithMarker);
-
 structure.Mask=mask;
 
 %% poszukiwanie miejsca, gdzie najczesciej zosta�a znaleziona twarz
 
-sizeOfFrames=size(FRAMES{1,1},1);
 positionOfBody=Fun_PositionOfBody(mask);
 
-% wyciecie tylko poszczegolnych elementow w obrazie
+%% poszukiwanie oczu, ust i nosa
+structure=Fun_FindEyeNoseMouth(FRAMES2, structure, positionOfBody);
+
+%%
 % poszukiwanie punktow poruszajacych sie na obrazie
-i=1;
 
 [timeOfRound, howMuchFrame1, structure]=Fun_TurningTimeTogether(FRAMES, positionOfBody, structure);
 
@@ -73,7 +70,7 @@ end
 
 %     dstpath = strrep(structureName, '.mp4', '.mat');
     structureName=strcat(structureName,'.mat');
-    save(fullfile(workingDirStr, structureName ), 'structure');
+    save(fullfile(workingDirStr, structureName ), 'structure','-v7.3');
 
 
 

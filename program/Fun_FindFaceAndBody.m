@@ -23,7 +23,7 @@ while(i<countOfFrames)
     bboxes=step(faceDetector,frame); % pierwsza wsp�rz�dna to x, druga to y, 3 szeroko��, 4 d�ugo�� (albo odwrotnie)
     structure.Face{i}=bboxes;
     structure.FrameWithMarker{i}=insertShape(frame,'Rectangle',bboxes);
-    
+
     if(isempty(bboxes))
        continue
     end
